@@ -2,7 +2,9 @@
 
 ## Description
 
-A simple file management system built with Python and Tkinter for organizing and managing files on your computer. This application allows users to create, delete, and organize files and directories easily.
+A simple file management system built with Python and Tkinter for organizing and managing files on your computer. This application allows users to create, delete, and organize files and directories easily. 
+
+>**This project is a work in progress.**
 
 ## Features
 
