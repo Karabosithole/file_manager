@@ -73,11 +73,12 @@ class FileManagerApp:
         selected_files = self.file_listbox.curselection()
         if selected_files:
             files_to_delete = [self.file_listbox.get(i) for i in selected_files]
-            confirmation = messagebox.askyesno("Confirmation", f"Are you sure you want to delete {len(files_to_delete)} files?")
+            confirmation = messagebox.askyesno("Confirmation", f"Are you sure you want to delete {len(files_to_delete)} file(s)?")
             if confirmation:
                 for file_name in files_to_delete:
                     full_path = os.path.join(self.path, file_name)
                     self.safe_file_operation(self._delete_file, full_path)
+                messagebox.showinfo("Success", f"{len(files_to_delete)} file(s) deleted successfully!")
         else:
             messagebox.showwarning("Warning", "No files selected for deletion.")
 
@@ -101,7 +102,6 @@ class FileManagerApp:
     def _delete_file(self, full_path):
         """Internal method to delete a file."""
         os.remove(full_path)  # Safe removal of the file
-        messagebox.showinfo("Success", f"File '{os.path.basename(full_path)}' deleted successfully!")
 
     def _rename_file(self, full_path, new_name):
         """Internal method to rename a file."""
