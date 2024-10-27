@@ -50,41 +50,31 @@ class FileManagerApp:
     def browse(self):
         self.path = filedialog.askdirectory()
         if self.path:
-            self.file_listbox.delete(0, tk.END)  # Clear previous entries
-            for file in os.listdir(self.path):
-                self.file_listbox.insert(tk.END, file)  # Insert files into listbox
+            self.update_file_list()
 
     def filter_files(self):
         filter_text = self.filter_entry.get()
-        if self.path:
-            self.file_listbox.delete(0, tk.END)  # Clear previous entries
-            for file in os.listdir(self.path):
-                if filter_text == "" or file.endswith(filter_text):
-                    self.file_listbox.insert(tk.END, file)  # Insert filtered files into listbox
+        self.update_file_list(filter_text)
+
+    def update_file_list(self, filter_text=""):
+        """Update the file listbox with files in the selected directory, filtered by the specified text."""
+        self.file_listbox.delete(0, tk.END)  # Clear previous entries
+        for file in os.listdir(self.path):
+            if filter_text == "" or file.endswith(filter_text):
+                self.file_listbox.insert(tk.END, file)  # Insert filtered files into listbox
 
     def create_file(self):
         if self.path:
             file_name = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
             if file_name:
-                try:
-                    with open(file_name, 'w') as f:
-                        f.write("")  # Create an empty file
-                    self.browse()  # Refresh file list
-                    messagebox.showinfo("Success", f"File '{os.path.basename(file_name)}' created successfully!")
-                except Exception as e:
-                    messagebox.showerror("Error", f"Failed to create file: {e}")
+                self.safe_file_operation(self._create_file, file_name)
 
     def delete_file(self):
         selected_file = self.file_listbox.curselection()
         if selected_file:
             file_name = self.file_listbox.get(selected_file)
             full_path = os.path.join(self.path, file_name)
-            try:
-                os.remove(full_path)
-                self.browse()  # Refresh file list
-                messagebox.showinfo("Success", f"File '{file_name}' deleted successfully!")
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to delete file: {e}")
+            self.safe_file_operation(self._delete_file, full_path)
         else:
             messagebox.showwarning("Warning", "No file selected for deletion.")
 
@@ -95,14 +85,33 @@ class FileManagerApp:
             new_name = filedialog.asksaveasfilename(initialfile=file_name, defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
             if new_name:
                 full_path = os.path.join(self.path, file_name)
-                try:
-                    os.rename(full_path, new_name)
-                    self.browse()  # Refresh file list
-                    messagebox.showinfo("Success", f"File renamed to '{os.path.basename(new_name)}' successfully!")
-                except Exception as e:
-                    messagebox.showerror("Error", f"Failed to rename file: {e}")
+                self.safe_file_operation(self._rename_file, full_path, new_name)
         else:
             messagebox.showwarning("Warning", "No file selected for renaming.")
+
+    def _create_file(self, file_name):
+        """Internal method to create a file."""
+        with open(file_name, 'w') as f:
+            f.write("")  # Create an empty file
+        messagebox.showinfo("Success", f"File '{os.path.basename(file_name)}' created successfully!")
+
+    def _delete_file(self, full_path):
+        """Internal method to delete a file."""
+        os.remove(full_path)
+        messagebox.showinfo("Success", f"File '{os.path.basename(full_path)}' deleted successfully!")
+
+    def _rename_file(self, full_path, new_name):
+        """Internal method to rename a file."""
+        os.rename(full_path, new_name)
+        messagebox.showinfo("Success", f"File renamed to '{os.path.basename(new_name)}' successfully!")
+
+    def safe_file_operation(self, operation, *args):
+        """Execute a file operation safely, with error handling."""
+        try:
+            operation(*args)
+            self.update_file_list()  # Refresh file list after the operation
+        except Exception as e:
+            messagebox.showerror("Error", f"Operation failed: {e}")
 
 if __name__ == "__main__":
     root = tk.Tk()
