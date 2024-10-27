@@ -69,6 +69,8 @@ class FileManagerApp:
                 messagebox.showinfo("Success", f"File '{file_name}' deleted successfully!")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to delete file: {e}")
+        else:
+            messagebox.showwarning("Warning", "No file selected for deletion.")
 
     def rename_file(self):
         selected_file = self.file_listbox.curselection()
@@ -83,6 +85,8 @@ class FileManagerApp:
                     messagebox.showinfo("Success", f"File renamed to '{os.path.basename(new_name)}' successfully!")
                 except Exception as e:
                     messagebox.showerror("Error", f"Failed to rename file: {e}")
+        else:
+            messagebox.showwarning("Warning", "No file selected for renaming.")
 
 if __name__ == "__main__":
     root = tk.Tk()
