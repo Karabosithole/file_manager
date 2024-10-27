@@ -21,6 +21,14 @@ class FileManagerApp:
         self.file_listbox.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.file_listbox.yview)
 
+        # Filter Entry
+        self.filter_frame = tk.Frame(self.master)
+        self.filter_frame.pack(pady=10)
+        self.filter_entry = tk.Entry(self.filter_frame, width=15)
+        self.filter_entry.pack(side=tk.LEFT, padx=5)
+        self.filter_button = tk.Button(self.filter_frame, text="Filter", command=self.filter_files)
+        self.filter_button.pack(side=tk.LEFT, padx=5)
+
         # Buttons
         self.button_frame = tk.Frame(self.master)
         self.button_frame.pack(pady=20)
@@ -45,6 +53,14 @@ class FileManagerApp:
             self.file_listbox.delete(0, tk.END)  # Clear previous entries
             for file in os.listdir(self.path):
                 self.file_listbox.insert(tk.END, file)  # Insert files into listbox
+
+    def filter_files(self):
+        filter_text = self.filter_entry.get()
+        if self.path:
+            self.file_listbox.delete(0, tk.END)  # Clear previous entries
+            for file in os.listdir(self.path):
+                if filter_text == "" or file.endswith(filter_text):
+                    self.file_listbox.insert(tk.END, file)  # Insert filtered files into listbox
 
     def create_file(self):
         if self.path:
