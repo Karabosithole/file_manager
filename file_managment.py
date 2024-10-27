@@ -48,29 +48,41 @@ class FileManagerApp:
 
     def create_file(self):
         if self.path:
-            file_name = "new_file.txt"  # Default name
-            full_path = os.path.join(self.path, file_name)
-            with open(full_path, 'w') as f:
-                f.write("")  # Create an empty file
-            self.browse()  # Refresh file list
+            file_name = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
+            if file_name:
+                try:
+                    with open(file_name, 'w') as f:
+                        f.write("")  # Create an empty file
+                    self.browse()  # Refresh file list
+                    messagebox.showinfo("Success", f"File '{os.path.basename(file_name)}' created successfully!")
+                except Exception as e:
+                    messagebox.showerror("Error", f"Failed to create file: {e}")
 
     def delete_file(self):
         selected_file = self.file_listbox.curselection()
         if selected_file:
             file_name = self.file_listbox.get(selected_file)
             full_path = os.path.join(self.path, file_name)
-            os.remove(full_path)
-            self.browse()  # Refresh file list
+            try:
+                os.remove(full_path)
+                self.browse()  # Refresh file list
+                messagebox.showinfo("Success", f"File '{file_name}' deleted successfully!")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to delete file: {e}")
 
     def rename_file(self):
         selected_file = self.file_listbox.curselection()
         if selected_file:
             file_name = self.file_listbox.get(selected_file)
-            new_name = filedialog.asksaveasfilename(initialfile=file_name)
+            new_name = filedialog.asksaveasfilename(initialfile=file_name, defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
             if new_name:
                 full_path = os.path.join(self.path, file_name)
-                os.rename(full_path, new_name)
-                self.browse()  # Refresh file list
+                try:
+                    os.rename(full_path, new_name)
+                    self.browse()  # Refresh file list
+                    messagebox.showinfo("Success", f"File renamed to '{os.path.basename(new_name)}' successfully!")
+                except Exception as e:
+                    messagebox.showerror("Error", f"Failed to rename file: {e}")
 
 if __name__ == "__main__":
     root = tk.Tk()
