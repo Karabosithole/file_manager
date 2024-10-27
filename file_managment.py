@@ -100,12 +100,12 @@ class FileManagerApp:
 
     def _delete_file(self, full_path):
         """Internal method to delete a file."""
-        os.remove(full_path)
+        os.remove(full_path)  # Safe removal of the file
         messagebox.showinfo("Success", f"File '{os.path.basename(full_path)}' deleted successfully!")
 
     def _rename_file(self, full_path, new_name):
         """Internal method to rename a file."""
-        os.rename(full_path, new_name)
+        os.rename(full_path, new_name)  # Safe renaming of the file
         messagebox.showinfo("Success", f"File renamed to '{os.path.basename(new_name)}' successfully!")
 
     def safe_file_operation(self, operation, *args):
