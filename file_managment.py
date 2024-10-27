@@ -12,7 +12,7 @@ class FileManagerApp:
         self.file_frame = tk.Frame(self.master)
         self.file_frame.pack(pady=10)
 
-        self.file_listbox = tk.Listbox(self.file_frame, width=50, height=15)
+        self.file_listbox = tk.Listbox(self.file_frame, selectmode=tk.MULTIPLE, width=50, height=15)
         self.file_listbox.pack(side=tk.LEFT, fill=tk.BOTH)
 
         # Scrollbar
@@ -39,7 +39,7 @@ class FileManagerApp:
         self.create_button = tk.Button(self.button_frame, text="Create File", command=self.create_file)
         self.create_button.pack(side=tk.LEFT, padx=5)
 
-        self.delete_button = tk.Button(self.button_frame, text="Delete File", command=self.delete_file)
+        self.delete_button = tk.Button(self.button_frame, text="Delete Files", command=self.delete_files)
         self.delete_button.pack(side=tk.LEFT, padx=5)
 
         self.rename_button = tk.Button(self.button_frame, text="Rename File", command=self.rename_file)
@@ -69,14 +69,17 @@ class FileManagerApp:
             if file_name:
                 self.safe_file_operation(self._create_file, file_name)
 
-    def delete_file(self):
-        selected_file = self.file_listbox.curselection()
-        if selected_file:
-            file_name = self.file_listbox.get(selected_file)
-            full_path = os.path.join(self.path, file_name)
-            self.safe_file_operation(self._delete_file, full_path)
+    def delete_files(self):
+        selected_files = self.file_listbox.curselection()
+        if selected_files:
+            files_to_delete = [self.file_listbox.get(i) for i in selected_files]
+            confirmation = messagebox.askyesno("Confirmation", f"Are you sure you want to delete {len(files_to_delete)} files?")
+            if confirmation:
+                for file_name in files_to_delete:
+                    full_path = os.path.join(self.path, file_name)
+                    self.safe_file_operation(self._delete_file, full_path)
         else:
-            messagebox.showwarning("Warning", "No file selected for deletion.")
+            messagebox.showwarning("Warning", "No files selected for deletion.")
 
     def rename_file(self):
         selected_file = self.file_listbox.curselection()
